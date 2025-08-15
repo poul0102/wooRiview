@@ -1,0 +1,79 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "admin",
+      "password": "1234",
+      "grade": 10
+    },
+    {
+      "id": 2,
+      "name": "user1",
+      "password": "1234",
+      "grade": 0
+    },
+    {
+      "id": 3,
+      "name": "user2",
+      "password": "1234",
+      "grade": 0
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "date": "2025-07-24",
+      "presenter_id": 2,
+      "topic": "리액트 성능 최적화"
+    },
+    {
+      "id": 2,
+      "date": "2025-07-24",
+      "presenter_id": 3,
+      "topic": "Next.js 구조 이해"
+    },
+    {
+      "id": 3,
+      "date": "2025-07-24",
+      "presenter_id": 1,
+      "topic": "Supabase 사용법"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "created_at": "2025-07-24 09:15:00",
+      "author_id": 1,
+      "content": "너무 잘 설명해주셨어요!",
+      "post_id": 1
+    },
+    {
+      "id": 2,
+      "created_at": "2025-07-24 09:30:00",
+      "author_id": 3,
+      "content": "궁금한 점이 생겼어요~",
+      "post_id": 1
+    },
+    {
+      "id": 3,
+      "created_at": "2025-07-24 10:05:00",
+      "author_id": 2,
+      "content": "구조 그림으로 보여주세요!",
+      "post_id": 2
+    },
+    {
+      "id": 4,
+      "created_at": "2025-07-24 11:20:00",
+      "author_id": 2,
+      "content": "유용한 툴 소개 감사해요.",
+      "post_id": 3
+    },
+    {
+      "id": 5,
+      "created_at": "2025-07-24 12:45:00",
+      "author_id": 3,
+      "content": "DB 연동 부분 다시 보고 싶어요.",
+      "post_id": 3
+    }
+  ]
+}
