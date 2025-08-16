@@ -47,15 +47,16 @@ export async function GET(request, { params }) {
 export async function POST(req, { params }) {
 
   const { postId } = await params;
-  const { content } = await req.json();
+  const { content, authorId } = await req.json();
 
-  if (!content || !postId) {
+  if (!content || !postId || !authorId) {
     return Response.json({ error: '내용을 작성해주세요' }, { status: 400 });
   }
 
   try {
     const { error } = await supabase.from('comments').insert({
       post_id: postId,
+      author_id: authorId,
       content,
     });
 

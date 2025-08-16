@@ -3,12 +3,14 @@
 import React from "react";
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/app/context/AuthContext'
 
 
 export default function PostForm({ postId }) {
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const { user } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -19,7 +21,7 @@ export default function PostForm({ postId }) {
     const res = await fetch(`/api/${postId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({ content, authorId: user.id }),
     })
 
     setLoading(false)
