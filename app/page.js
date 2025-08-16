@@ -3,6 +3,7 @@ import React, { Suspense } from "react";
 import { requireAuth } from "@/lib/auth";
 import Card from "@/app/ui/Card";
 import Spinner from "./ui/Spinner";
+import LogoutButton from "./ui/LogoutButton";
 
 async function getPosts() {
   const res = await fetch("http://localhost:3000/api", {
@@ -26,6 +27,9 @@ export default async function DashboardPage() {
 
   return (
     <>
+      <div className="flex justify-end mb-4 pr-4">
+        <LogoutButton />
+      </div>
       <p className="text-lg font-semibold text-gray-800 my-10">{today}</p>
 
       <Suspense fallback={<Spinner />}>
