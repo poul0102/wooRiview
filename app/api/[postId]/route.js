@@ -34,12 +34,38 @@ export async function GET(request, { params }) {
       return Response.json({ error: commentsError.message }, { status: 500 });
     }
 
-    return Response.json({ 
+    return Response.json({
       post: post,
-      comments: comments 
+      comments: comments
     });
 
   } catch (error) {
     return Response.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+export async function POST(req, { params }) {
+
+  const { postId } = await params;
+  const { content } = await req.json();
+
+  if (!content || !postId) {
+    return Response.json({ error: '내용을 작성해주세요' }, { status: 400 });
+  }
+
+  try {
+    const { error } = await supabase.from('comments').insert({
+      post_id: postId,
+      content,
+    });
+
+    if (error) {
+      return Response.json({ error: error.message }, { status: 500 });
+    }
+
+    return Response.json({ success: true }, { status: 201 });
+  } catch (error) {
+    console.error('댓글 등록 오류:', error);
+    return Response.json({ error: '서버 오류가 발생했습니다' }, { status: 500 });
   }
 }

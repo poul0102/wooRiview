@@ -48,7 +48,7 @@ export default async function PostIdPage({ params }) {
           </p>
         </div>
 
-        <PostForm />
+        <PostForm postId={postId} />
 
         {/* 댓글 데이터 Suspense로 streaming 처리 */}
         <Suspense fallback={<Spinner />}>
