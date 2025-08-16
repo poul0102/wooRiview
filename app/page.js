@@ -1,9 +1,9 @@
-// app/dashboard/page.js (서버 컴포넌트, 기본이 서버 컴포넌트임)
 import React, { Suspense } from "react";
 import { requireAuth } from "@/lib/auth";
 import Card from "@/app/ui/Card";
 import Spinner from "./ui/Spinner";
 import LogoutButton from "./ui/LogoutButton";
+import CreatePostButton from "@/app/ui/CreatePostButton";
 
 async function getPosts() {
   const res = await fetch("http://localhost:3000/api", {
@@ -30,7 +30,10 @@ export default async function DashboardPage() {
       <div className="flex justify-end mb-4 pr-4">
         <LogoutButton />
       </div>
-      <p className="text-lg font-semibold text-gray-800 my-10">{today}</p>
+      <div className="flex justify-between items-center mb-4 pr-4">
+        <p className="text-lg font-semibold text-gray-800 pl-4">{today}</p>
+        <CreatePostButton />
+      </div>
 
       <Suspense fallback={<Spinner />}>
         {posts.map((post) => (
