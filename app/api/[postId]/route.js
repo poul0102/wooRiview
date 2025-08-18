@@ -18,10 +18,21 @@ export async function GET(request, { params }) {
       return Response.json({ error: postError.message }, { status: 500 });
     }
 
-
     // 로그인하지 않은 사용자는 댓글 볼 수 없음
     if (!viewerId) {
       return Response.json({ post, comments: [], isPresenter: false });
+    }
+
+    // 로그인한 사용자 정보 조회 (level 확인)
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("level")
+      .eq("id", viewerId)
+      .single();
+
+    if (userError) {
+      console.error('User fetch error:', userError);
+      return Response.json({ error: userError.message }, { status: 500 });
     }
 
     // 발표자 여부 확인
@@ -29,7 +40,7 @@ export async function GET(request, { params }) {
 
     let comments = [];
 
-    if (isPresenter) {
+    if (user.level === 2 || isPresenter) {
       const { data: allComments, error: commentsError } = await supabase
         .from("comments")
         .select("*")
@@ -42,6 +53,7 @@ export async function GET(request, { params }) {
       }
       comments = allComments || [];
     } else {
+      // 일반 사용자는 본인 댓글만 조회
       const { data: myComments, error: commentsError } = await supabase
         .from("comments")
         .select("*")
