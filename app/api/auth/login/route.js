@@ -13,7 +13,10 @@ export async function POST(req) {
         return NextResponse.json({ ok: false, message: error?.message || "로그인 실패" }, { status: 401 });
     }
 
-    const response = NextResponse.json({ ok: true });
+    const response = NextResponse.json({ 
+        ok: true,
+        user: data.user,
+    });
 
     response.cookies.set({
         name: "session",

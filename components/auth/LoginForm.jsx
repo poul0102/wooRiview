@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Button from "../Button";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,7 +29,8 @@ export default function LoginForm() {
 
     const data = await res.json();
 
-    if (res.ok) {
+    if (data.ok) {
+      login(data.user);
       router.push("/"); // 로그인 성공 후 루트 이동
     } else {
       setError(data.message || "로그인 실패");

@@ -1,21 +1,16 @@
-// app/api/dashboard/[postId]/route.js
 import supabase from "@/lib/supabaseClient";
 
 export async function GET(request, { params }) {
   const { postId } = await params;
 
   try {
-    // 1) 특정 게시글 정보 + 발표자 이름 조회
+    const url = new URL(request.url);
+    const viewerId = url.searchParams.get("viewerId");
+
+    // 게시글 + 작성자 정보 조회
     const { data: post, error: postError } = await supabase
       .from("posts")
-      .select(
-        `
-        *,
-        users!inner (
-          name
-        )
-      `
-      )
+      .select(`*, users!inner ( name )`)
       .eq("id", postId)
       .single();
 
@@ -23,29 +18,57 @@ export async function GET(request, { params }) {
       return Response.json({ error: postError.message }, { status: 500 });
     }
 
-    // 2) 해당 게시글의 댓글들 조회
-    const { data: comments, error: commentsError } = await supabase
-      .from("comments")
-      .select("*")
-      .eq("post_id", postId)
-      .order("created_at", { ascending: true });
 
-    if (commentsError) {
-      return Response.json({ error: commentsError.message }, { status: 500 });
+    // 로그인하지 않은 사용자는 댓글 볼 수 없음
+    if (!viewerId) {
+      return Response.json({ post, comments: [], isPresenter: false });
+    }
+
+    // 발표자 여부 확인
+    const isPresenter = String(viewerId) === String(post.presenter_id);
+
+    let comments = [];
+
+    if (isPresenter) {
+      const { data: allComments, error: commentsError } = await supabase
+        .from("comments")
+        .select("*")
+        .eq("post_id", postId)
+        .order("created_at", { ascending: true });
+
+      if (commentsError) {
+        console.error('All comments fetch error:', commentsError);
+        return Response.json({ error: commentsError.message }, { status: 500 });
+      }
+      comments = allComments || [];
+    } else {
+      const { data: myComments, error: commentsError } = await supabase
+        .from("comments")
+        .select("*")
+        .eq("post_id", postId)
+        .eq("author_id", viewerId)
+        .order("created_at", { ascending: true });
+
+      if (commentsError) {
+        console.error('My comments fetch error:', commentsError);
+        return Response.json({ error: commentsError.message }, { status: 500 });
+      }
+      comments = myComments || [];
     }
 
     return Response.json({
-      post: post,
-      comments: comments
+      post,
+      comments,
+      isPresenter,
     });
 
   } catch (error) {
+    console.error('API Error:', error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 export async function POST(req, { params }) {
-
   const { postId } = await params;
   const { content, authorId } = await req.json();
 
@@ -56,8 +79,8 @@ export async function POST(req, { params }) {
   try {
     const { error } = await supabase.from('comments').insert({
       post_id: postId,
-      author_id: authorId,
       content,
+      author_id: authorId,
     });
 
     if (error) {
