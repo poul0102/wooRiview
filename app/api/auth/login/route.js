@@ -23,7 +23,7 @@ export async function POST(req) {
         value: data.session?.access_token || "",
         httpOnly: true,
         path: "/",
-        maxAge: 60 * 60 * 24,
+        maxAge: 60 * 60 * 12,
         sameSite: "lax",
     });
 

@@ -4,6 +4,7 @@ import Card from "@/app/ui/Card";
 import Spinner from "./ui/Spinner";
 import LogoutButton from "./ui/LogoutButton";
 import CreatePostButton from "@/app/ui/CreatePostButton";
+import supabase from "@/lib/supabaseClient";
 
 async function getPosts() {
   const res = await fetch("http://localhost:3000/api", {
@@ -13,8 +14,24 @@ async function getPosts() {
   return json.data;
 }
 
+async function getCurrentUser(userId) {
+  const { data, error } = await supabase
+    .from("users")
+    .select("level")
+    .eq("id", userId)
+    .single();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  return data;
+}
+
 export default async function DashboardPage() {
-  await requireAuth();
+  const user = await requireAuth();
+  const currentUser = await getCurrentUser(user.id);
 
   const posts = await getPosts();
 
@@ -28,11 +45,11 @@ export default async function DashboardPage() {
   return (
     <>
       <div className="flex justify-end mb-4 pr-4">
-        <LogoutButton />
+        {currentUser?.level === 2 && <CreatePostButton />}
       </div>
       <div className="flex justify-between items-center mb-4 pr-4">
         <p className="text-lg font-semibold text-gray-800 pl-4">{today}</p>
-        <CreatePostButton />
+        <LogoutButton />
       </div>
 
       <Suspense fallback={<Spinner />}>
