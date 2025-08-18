@@ -44,12 +44,12 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <div className="flex justify-end mb-4 pr-4">
-        {currentUser?.level === 2 && <CreatePostButton />}
-      </div>
-      <div className="flex justify-between items-center mb-4 pr-4">
-        <p className="text-lg font-semibold text-gray-800 pl-4">{today}</p>
-        <LogoutButton />
+      <div className="flex justify-between items-center mb-4 pr-4 pl-4">
+        <p className="text-lg font-semibold text-gray-800">{today}</p>
+        <div className="flex items-center space-x-2">
+          {currentUser?.level === 2 && <CreatePostButton />}
+          <LogoutButton />
+        </div>
       </div>
 
       <Suspense fallback={<Spinner />}>
